@@ -2,17 +2,25 @@ RSpec.describe "Api::V1::RegistrationsController", type: :request do
   describe "POST #create" do
     before { post api_v1_registrations_path(params: params) }
 
+    let(:entity_name) { Faker::Company.name }
+
     let(:params) do
       {
         account: {
-          name: Faker::Superhero.name, from_partner: true,
+          name: Faker::Superhero.name,
+          entities: [
+            {
+              name: entity_name
+            }
+          ],
           users: [{
             email: Faker::Internet.email,
             first_name: Faker::Name.female_first_name,
             last_name: Faker::Name.last_name,
             phone: Faker::PhoneNumber.cell_phone,
-          }],
-        },
+            entities: [entity_name]
+          }]
+        }
       }
     end
 

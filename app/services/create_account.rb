@@ -11,7 +11,7 @@ class CreateAccount < ApplicationService
       Result.new(false, nil, @errors.join(","))
     else
       account = Account.new(account_params)
-      if account.save && User.insert_all(users_params(account))
+      if account.save && account.insert_all(entities: entities_params, users: users_params)
         Result.new(true, account)
       else
         @errors << account.errors.full_messages
@@ -27,29 +27,31 @@ class CreateAccount < ApplicationService
   end
 
   def account_params
-    if @from_fintera
+    {
+      name: @payload[:name],
+      active: @from_fintera,
+    }
+  end
+
+  def entities_params
+    @payload[:entities] ||= []
+    @payload[:entities].map do |entity|
       {
-        name: @payload[:name],
-        active: true,
-      }
-    else
-      {
-        name: @payload[:name],
-        active: false,
+        name: entity[:name],
+        active: entity[:active]
       }
     end
   end
 
-  def users_params(account)
+  def users_params
+    @payload[:users] ||= []
     @payload[:users].map do |user|
       {
         first_name: user[:first_name],
         last_name: user[:last_name],
         email: user[:email],
         phone: user[:phone].to_s.gsub(/\D/, ""),
-        account_id: account.id,
-        created_at: Time.zone.now,
-        updated_at: Time.zone.now,
+        entity_names: user[:entities]
       }
     end
   end
