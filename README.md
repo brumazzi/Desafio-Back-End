@@ -42,7 +42,7 @@ Deixamos na aplicação vários pontos que podem ser refatorados, se identificar
 Você precisa:
  * docker
  * docker-compose
- * ruby 3.0.2
+ * ruby 3.0.3
 
 Para iniciar o container do PostgreSQL, basta rodar na raíz do projeto: `docker-compose up`
 
